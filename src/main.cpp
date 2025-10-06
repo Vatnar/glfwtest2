@@ -320,7 +320,6 @@ int main()
             lightingShader.setFloat("factor", factor);
             lightingShader.setMat4("model", model);
             lightingShader.setVec3("lightPos", lightPos);
-            lightingShader.setVec3("viewPos", camera.Position);
 
             // glBindVertexArray(VAO);
             glBindVertexArray(VAO);
