@@ -198,6 +198,8 @@ int main()
     // TODO: use new dsa api
     uint diffuseMap{loadTexture("textures/container2.png")};
     lightingShader.setInt("material.diffuse", 0);
+    uint specularMap{loadTexture("textures/container2_specular.png")};
+    lightingShader.setInt("material.specular", 1);
 
     // note: depth testing
     glEnable(GL_DEPTH_TEST);
@@ -281,6 +283,8 @@ int main()
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, specularMap);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
