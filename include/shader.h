@@ -35,6 +35,10 @@ public:
     {
         glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
     }
+    void setVec3(const std::string &name, const f32 x, const f32 y, const f32 z) const
+    {
+        glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(glm::vec3(x, y, z)));
+    }
 };
 inline Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
