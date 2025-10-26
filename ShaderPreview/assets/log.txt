@@ -1,0 +1,7 @@
+[src/main.cpp:83:23] INFO: Stencil buffer bits: 8
+(Shader) [src/Shader.cpp:90:16] INFO: Successfully compiled and linked shader
+(Shader) [src/Shader.cpp:90:16] INFO: Successfully compiled and linked shader
+(Model) [src/Model.cpp:17:16] INFO: Successfully loaded model
+(Shader) [src/Shader.cpp:90:16] INFO: Successfully compiled and linked shader
+INFO: Started application.
+INFO: Application terminated.

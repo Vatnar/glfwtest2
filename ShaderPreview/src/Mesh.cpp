@@ -1,6 +1,10 @@
-#include "Mesh.h"
+#include "glad/glad.h"
 
 #include <utility>
+
+#include "Mesh.h"
+#include "Shader.h"
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint> indices, std::vector<Texture> textures)
 {
     this->vertices = std::move(vertices);

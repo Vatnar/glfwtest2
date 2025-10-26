@@ -56,124 +56,129 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cmath>
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-template <typename TOther>
-aiVector2t<TReal>::operator aiVector2t<TOther> () const {
-    return aiVector2t<TOther>(static_cast<TOther>(x),static_cast<TOther>(y));
+template<typename TReal>
+inline void aiVector2t<TReal>::Set(TReal pX, TReal pY)
+{
+    x = pX;
+    y = pY;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-void aiVector2t<TReal>::Set( TReal pX, TReal pY) {
-    x = pX; y = pY;
-}
-
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-TReal aiVector2t<TReal>::SquareLength() const {
-    return x*x + y*y;
+template<typename TReal>
+inline TReal aiVector2t<TReal>::SquareLength() const
+{
+    return x * x + y * y;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-TReal aiVector2t<TReal>::Length() const {
-    return std::sqrt( SquareLength());
+template<typename TReal>
+inline TReal aiVector2t<TReal>::Length() const
+{
+    return std::sqrt(SquareLength());
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-aiVector2t<TReal>& aiVector2t<TReal>::Normalize() {
+template<typename TReal>
+inline aiVector2t<TReal> &aiVector2t<TReal>::Normalize()
+{
     *this /= Length();
     return *this;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-const aiVector2t<TReal>& aiVector2t<TReal>::operator += (const aiVector2t& o) {
-    x += o.x; y += o.y;
+template<typename TReal>
+inline const aiVector2t<TReal> &aiVector2t<TReal>::operator+=(const aiVector2t &o)
+{
+    x += o.x;
+    y += o.y;
     return *this;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-const aiVector2t<TReal>& aiVector2t<TReal>::operator -= (const aiVector2t& o) {
-    x -= o.x; y -= o.y;
+template<typename TReal>
+inline const aiVector2t<TReal> &aiVector2t<TReal>::operator-=(const aiVector2t &o)
+{
+    x -= o.x;
+    y -= o.y;
     return *this;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-const aiVector2t<TReal>& aiVector2t<TReal>::operator *= (TReal f) {
-    x *= f; y *= f;
+template<typename TReal>
+inline const aiVector2t<TReal> &aiVector2t<TReal>::operator*=(TReal f)
+{
+    x *= f;
+    y *= f;
     return *this;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-const aiVector2t<TReal>& aiVector2t<TReal>::operator /= (TReal f) {
-    x /= f; y /= f;
+template<typename TReal>
+inline const aiVector2t<TReal> &aiVector2t<TReal>::operator/=(TReal f)
+{
+    x /= f;
+    y /= f;
     return *this;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-TReal aiVector2t<TReal>::operator[](unsigned int i) const {
-	switch (i) {
-		case 0:
-			return x;
-		case 1:
-			return y;
-		default:
-			break;
-
+template<typename TReal>
+inline TReal aiVector2t<TReal>::operator[](unsigned int i) const
+{
+    switch (i)
+    {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        default:
+            break;
     }
     return x;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-bool aiVector2t<TReal>::operator== (const aiVector2t& other) const {
+template<typename TReal>
+inline bool aiVector2t<TReal>::operator==(const aiVector2t &other) const
+{
     return x == other.x && y == other.y;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-bool aiVector2t<TReal>::operator!= (const aiVector2t& other) const {
+template<typename TReal>
+inline bool aiVector2t<TReal>::operator!=(const aiVector2t &other) const
+{
     return x != other.x || y != other.y;
 }
 
 // ---------------------------------------------------------------------------
 template<typename TReal>
-inline
-bool aiVector2t<TReal>::Equal(const aiVector2t& other, TReal epsilon) const {
-    return
-        std::abs(x - other.x) <= epsilon &&
-        std::abs(y - other.y) <= epsilon;
+inline bool aiVector2t<TReal>::Equal(const aiVector2t &other, TReal epsilon) const
+{
+    return std::abs(x - other.x) <= epsilon &&
+           std::abs(y - other.y) <= epsilon;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-aiVector2t<TReal>& aiVector2t<TReal>::operator= (TReal f)   {
+template<typename TReal>
+inline aiVector2t<TReal> &aiVector2t<TReal>::operator=(TReal f)
+{
     x = y = f;
     return *this;
 }
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-inline
-const aiVector2t<TReal> aiVector2t<TReal>::SymMul(const aiVector2t& o) {
-    return aiVector2t(x*o.x,y*o.y);
+template<typename TReal>
+inline const aiVector2t<TReal> aiVector2t<TReal>::SymMul(const aiVector2t &o)
+{
+    return aiVector2t(x * o.x, y * o.y);
+}
+
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+template<typename TOther>
+aiVector2t<TReal>::operator aiVector2t<TOther>() const
+{
+    return aiVector2t<TOther>(static_cast<TOther>(x), static_cast<TOther>(y));
 }
 
 

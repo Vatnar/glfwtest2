@@ -257,29 +257,31 @@ protected:
 };
 
 // ----------------------------------------------------------------------------------
-inline Logger::Logger() AI_NO_EXCEPT :
-        m_Severity(NORMAL) {
-    // empty
-}
-
-// ----------------------------------------------------------------------------------
 inline Logger::~Logger() = default;
 
 // ----------------------------------------------------------------------------------
-inline Logger::Logger(LogSeverity severity) :
-        m_Severity(severity) {
-    // empty
-}
-
-// ----------------------------------------------------------------------------------
-inline void Logger::setLogSeverity(LogSeverity log_severity){
+inline void Logger::setLogSeverity(LogSeverity log_severity)
+{
     m_Severity = log_severity;
 }
 
 // ----------------------------------------------------------------------------------
 // Log severity getter
-inline Logger::LogSeverity Logger::getLogSeverity() const {
+inline Logger::LogSeverity Logger::getLogSeverity() const
+{
     return m_Severity;
+}
+
+// ----------------------------------------------------------------------------------
+inline Logger::Logger() AI_NO_EXCEPT : m_Severity(NORMAL)
+{
+    // empty
+}
+
+// ----------------------------------------------------------------------------------
+inline Logger::Logger(LogSeverity severity) : m_Severity(severity)
+{
+    // empty
 }
 
 } // Namespace Assimp

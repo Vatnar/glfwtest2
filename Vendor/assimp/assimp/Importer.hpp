@@ -670,18 +670,21 @@ protected:
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
-AI_FORCE_INLINE const aiScene *Importer::ReadFile(const std::string &pFile, unsigned int pFlags) {
+AI_FORCE_INLINE const aiScene *Importer::ReadFile(const std::string &pFile, unsigned int pFlags)
+{
     return ReadFile(pFile.c_str(), pFlags);
 }
 // ----------------------------------------------------------------------------
-AI_FORCE_INLINE void Importer::GetExtensionList(std::string &szOut) const {
+AI_FORCE_INLINE bool Importer::IsExtensionSupported(const std::string &szExtension) const
+{
+    return IsExtensionSupported(szExtension.c_str());
+}
+// ----------------------------------------------------------------------------
+AI_FORCE_INLINE void Importer::GetExtensionList(std::string &szOut) const
+{
     aiString s;
     GetExtensionList(s);
     szOut = s.data;
-}
-// ----------------------------------------------------------------------------
-AI_FORCE_INLINE bool Importer::IsExtensionSupported(const std::string &szExtension) const {
-    return IsExtensionSupported(szExtension.c_str());
 }
 
 } // namespace Assimp

@@ -54,9 +54,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/color4.h>
 
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-const aiColor4t<TReal>& aiColor4t<TReal>::operator += (const aiColor4t<TReal>& o) {
+template<typename TReal>
+AI_FORCE_INLINE const aiColor4t<TReal> &aiColor4t<TReal>::operator+=(const aiColor4t<TReal> &o)
+{
     r += o.r;
     g += o.g;
     b += o.b;
@@ -65,9 +65,9 @@ const aiColor4t<TReal>& aiColor4t<TReal>::operator += (const aiColor4t<TReal>& o
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-const aiColor4t<TReal>& aiColor4t<TReal>::operator -= (const aiColor4t<TReal>& o) {
+template<typename TReal>
+AI_FORCE_INLINE const aiColor4t<TReal> &aiColor4t<TReal>::operator-=(const aiColor4t<TReal> &o)
+{
     r -= o.r;
     g -= o.g;
     b -= o.b;
@@ -76,9 +76,9 @@ const aiColor4t<TReal>& aiColor4t<TReal>::operator -= (const aiColor4t<TReal>& o
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-const aiColor4t<TReal>& aiColor4t<TReal>::operator *= (TReal f) {
+template<typename TReal>
+AI_FORCE_INLINE const aiColor4t<TReal> &aiColor4t<TReal>::operator*=(TReal f)
+{
     r *= f;
     g *= f;
     b *= f;
@@ -87,9 +87,9 @@ const aiColor4t<TReal>& aiColor4t<TReal>::operator *= (TReal f) {
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-const aiColor4t<TReal>& aiColor4t<TReal>::operator /= (TReal f) {
+template<typename TReal>
+AI_FORCE_INLINE const aiColor4t<TReal> &aiColor4t<TReal>::operator/=(TReal f)
+{
     r /= f;
     g /= f;
     b /= f;
@@ -98,70 +98,62 @@ const aiColor4t<TReal>& aiColor4t<TReal>::operator /= (TReal f) {
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-TReal aiColor4t<TReal>::operator[](unsigned int i) const {
-    switch ( i ) {
-        case 0:
-            return r;
-        case 1:
-            return g;
-        case 2:
-            return b;
-        case 3:
-            return a;
-        default:
-            break;
-    }
-    return r;
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-TReal& aiColor4t<TReal>::operator[](unsigned int i) {
-    switch ( i ) {
-        case 0:
-            return r;
-        case 1:
-            return g;
-        case 2:
-            return b;
-        case 3:
-            return a;
-        default:
-            break;
-    }
-    return r;
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-bool aiColor4t<TReal>::operator== (const aiColor4t<TReal>& other) const {
+template<typename TReal>
+AI_FORCE_INLINE bool aiColor4t<TReal>::operator==(const aiColor4t<TReal> &other) const
+{
     return r == other.r && g == other.g && b == other.b && a == other.a;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE
-bool aiColor4t<TReal>::operator!= (const aiColor4t<TReal>& other) const {
+template<typename TReal>
+AI_FORCE_INLINE bool aiColor4t<TReal>::operator!=(const aiColor4t<TReal> &other) const
+{
     return r != other.r || g != other.g || b != other.b || a != other.a;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
+template<typename TReal>
+AI_FORCE_INLINE bool aiColor4t<TReal>::operator<(const aiColor4t<TReal> &other) const
+{
+    return r < other.r || (r == other.r && (g < other.g || (g == other.g && (b < other.b || (b == other.b && (a < other.a))))));
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
 AI_FORCE_INLINE
-bool aiColor4t<TReal>::operator< (const aiColor4t<TReal>& other) const {
-    return r < other.r || (
-        r == other.r && (
-            g < other.g || (
-                g == other.g && (
-                    b < other.b || (
-                        b == other.b && (
-                            a < other.a
-                        )
-                    )
-                )
-            )
-        )
-    );
+        TReal
+        aiColor4t<TReal>::operator[](unsigned int i) const
+{
+    switch (i)
+    {
+        case 0:
+            return r;
+        case 1:
+            return g;
+        case 2:
+            return b;
+        case 3:
+            return a;
+        default:
+            break;
+    }
+    return r;
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE TReal &aiColor4t<TReal>::operator[](unsigned int i)
+{
+    switch (i)
+    {
+        case 0:
+            return r;
+        case 1:
+            return g;
+        case 2:
+            return b;
+        case 3:
+            return a;
+        default:
+            break;
+    }
+    return r;
 }
 
 // ------------------------------------------------------------------------------------------------

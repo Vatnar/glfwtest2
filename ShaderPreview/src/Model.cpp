@@ -1,15 +1,24 @@
+#include "glad/glad.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include <iostream>
-
-#include "Model.h"
-
 #include "stb/stb_image.h"
 
+
+#include "Mesh.h"
+#include "Model.h"
+#include "Shader.h"
+
 using namespace std;
+Model::Model(const char *path)
+{
+    loadModel(path);
+    logger.Info("Successfully loaded model");
+}
 void Model::Draw(const Shader &shader) const
 {
+    shader.use();
     for (const auto &mesh: meshes)
     {
         mesh.Draw(shader);
@@ -42,6 +51,7 @@ void Model::processNode(const aiNode *node, const aiScene *scene)
         processNode(node->mChildren[i], scene);
     }
 }
+
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
     vector<Vertex>  vertices;
@@ -97,6 +107,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     return {vertices, indices, textures};
 }
 
+
 vector<Texture> Model::loadMaterialTextures(const aiMaterial *mat, const aiTextureType type, const string &typeName)
 {
     vector<Texture> textures;
@@ -126,8 +137,6 @@ vector<Texture> Model::loadMaterialTextures(const aiMaterial *mat, const aiTextu
     }
     return textures;
 }
-
-
 unsigned int Model::TextureFromFile(const char *path, const std::string &directory)
 {
     auto filename = std::string(path);
@@ -164,10 +173,5 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
     }
 
     return textureID;
-}
-Model::Model(const char *path)
-{
-    loadModel(path);
-    logger.Info("Successfully loaded model");
 }
 Logger Model::logger{"Model"};

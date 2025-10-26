@@ -1,14 +1,12 @@
-#include "Shader.h"
+#include "glad/glad.h"
 
 #include <fstream>
-
 #include "glm/gtc/type_ptr.hpp"
 
-Logger Shader::logger{"Shader"};
+#include "Shader.h"
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
-    // 1. get code from file path
     std::string   vertexCode;
     std::string   fragmentCode;
     std::ifstream vShaderFile;
@@ -34,7 +32,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     }
     catch (std::ifstream::failure &e)
     {
-        logger.Error("File not successfully read");
+        logger.Error(fmt::format("File not successfully read at {} or {}", vertexPath, fragmentPath));
     }
     const char *vShaderCode{vertexCode.c_str()};
     const char *fShaderCode{fragmentCode.c_str()};
@@ -91,6 +89,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     }
     logger.Info("Successfully compiled and linked shader");
 }
+
 void Shader::use() const { glUseProgram(ID); }
 void Shader::setBool(const std::string &name, bool value) const
 {
@@ -116,3 +115,4 @@ void Shader::setVec3(const std::string &name, const f32 x, const f32 y, const f3
 {
     glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(glm::vec3(x, y, z)));
 }
+Logger Shader::logger{"Shader"};

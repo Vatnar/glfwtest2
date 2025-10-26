@@ -31,11 +31,10 @@ void Logger::ClearLog()
             {
                 logFile.close();
             }
-            fs::path logPath = fs::current_path().parent_path() / "log.txt";
-            logFile.open(logPath, std::ios::out | std::ios::trunc);
+            logFile.open(fileLocation, std::ios::out | std::ios::trunc);
             if (!logFile.is_open())
             {
-                std::cerr << "Failed to clear log file" << std::endl;
+                fmt::print(stderr, "[LOGGER::ERROR] Failed to clear the log file");
                 logToFile = false;
             }
         }
@@ -45,7 +44,7 @@ void Logger::ClearLog()
     std::system("cls");
 #else
     // NOTE: Ugly ass work around the gtk warnings
-    std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+    fmt::print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 #endif
 }
 void Logger::Info(const std::string &message, const std::source_location &location) const
@@ -100,18 +99,6 @@ void Logger::log(const std::string &message, const char *category, fmt::color co
         }
     }
 }
-void Logger::logMsg(const std::string &formattedMessage) const
-{
-    if (logToFile)
-    {
-        std::lock_guard lock(fileMutex);
-        if (logFile.is_open())
-        {
-            logFile << formattedMessage << std::endl;
-            logFile.flush();
-        }
-    }
-}
 void Logger::log(const std::string &message, const char *category, fmt::color color) const
 {
     std::string formattedMessage;
@@ -124,6 +111,18 @@ void Logger::log(const std::string &message, const char *category, fmt::color co
 
     logMsg(formattedMessage);
 }
+void Logger::logMsg(const std::string &formattedMessage) const
+{
+    if (logToFile)
+    {
+        std::lock_guard lock(fileMutex);
+        if (logFile.is_open())
+        {
+            logFile << formattedMessage << std::endl;
+            logFile.flush();
+        }
+    }
+}
 void Logger::openLogFileIfNeeded()
 {
     std::lock_guard lock(fileMutex);
@@ -132,12 +131,11 @@ void Logger::openLogFileIfNeeded()
 }
 void Logger::openLogFile()
 {
-    // TODO: Ability to select where to place log
-    static const fs::path logPath = fs::current_path() / "log.txt";
-    logFile.open(logPath, std::ios::app);
+    logFile.open(fileLocation, std::ios::app);
+    fmt::print("Log file opened at {}", fileLocation.string());
     if (!logFile.is_open())
     {
-        fmt::print(stderr, fmt::fg(DEBUG_COLOR), "Failed to open log file at {}", logPath.string());
+        fmt::print(stderr, fmt::fg(DEBUG_COLOR), "Failed to open log file at {}", fileLocation.string());
         logToFile = false;
     }
 }

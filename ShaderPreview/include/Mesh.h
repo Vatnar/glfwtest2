@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "Shader.h"
 #include "Types.h"
 
+
+class Shader;
 struct Vertex
 {
     glm::vec3 Position;

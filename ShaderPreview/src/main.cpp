@@ -1,30 +1,25 @@
 #include <glad/glad.h>
 
-#include <iomanip>
-
 #include <GLFW/glfw3.h>
-
-#include "Shader.h"
-#include "Types.h"
-
-#include <stb/stb_image.h>
-
-#include <Logger.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <stb/stb_image.h>
+
+#include <Logger.h>
+
 #include "Camera.h"
-
-
 #include "Model.h"
-
+#include "Shader.h"
+#include "SphereModel.h"
+#include "Types.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+void mouse_callback(GLFWwindow *window, f64 xpos, f64 ypos);
 void processInput(GLFWwindow *window);
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+void scroll_callback(GLFWwindow *window, f64 xoffset, f64 yoffset);
 // settings
 constexpr uint SRC_WIDTH  = 800;
 constexpr uint SRC_HEIGTH = 600;
@@ -37,6 +32,7 @@ f32    lastFrame{0.0f};
 
 bool firstMouse{true};
 
+
 int main()
 {
     // NOTE: Turn on file logging
@@ -48,6 +44,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_STENCIL_BITS, 8);
 
     GLFWwindow *window = glfwCreateWindow(SRC_WIDTH, SRC_HEIGTH, "LearnOpenGL", nullptr, nullptr);
     if (window == nullptr)
@@ -70,19 +67,36 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-
     stbi_set_flip_vertically_on_load(true);
+
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    // NOTE: Outline setup
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+
+    int stencilBits;
+    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencilBits);
+    Logger::Get().Info("Stencil buffer bits: " + std::to_string(stencilBits));
 
     const Shader ourShader{"shaders/3dProj.vert", "shaders/Lighting.frag"};
+    const Shader shaderSingleColor{"shaders/3dProj.vert", "shaders/shaderSingleColor.frag"};
     const Model  ourModel{"models/backpack/backpack.obj"};
+    // const Model ourModel{"models/suzanne/suzanne.obj"};
 
-    camera.MovementSpeed *= 2;
+    [[maybe_unused]] const Shader pointLightshader{"shaders/3dProj.vert", "shaders/PointLight.frag"};
+    [[maybe_unused]] SphereModel  lightSphere{};
+
+    camera.set_movement_speed(camera.movement_speed() * 2);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // note: Main loop
 
     Logger::Get().InfoS("Started application.");
+
 
     while (!glfwWindowShouldClose(window))
     {
@@ -92,31 +106,53 @@ int main()
 
         processInput(window);
 
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        glm::mat4 view       = camera.GetViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(camera.zoom()), (f32) SRC_WIDTH / (f32) SRC_HEIGTH, 0.1f, 100.0f);
+
+        shaderSingleColor.use();
+        shaderSingleColor.setMat4("view", view);
+        shaderSingleColor.setMat4("projection", projection);
 
         ourShader.use();
-
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float) SRC_WIDTH / (float) SRC_HEIGTH, 0.1f, 100.0f);
-        glm::mat4 view       = camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
-
-        // render the loaded model
-        auto model = glm::mat4(1.0f);
-        model      = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model      = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));     // it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", model);
+        ourShader.setMat4("projection", projection);
+        ourShader.setVec3("viewPos", camera.position());
         ourShader.setVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
         ourShader.setVec3("dirLight.diffuse", glm::vec3(1.0f));
         ourShader.setVec3("dirLight.ambient", glm::vec3(0.2f));
-        ourShader.setVec3("dirLight.specular", glm::vec3(1.0f));
+        ourShader.setVec3("dirLight.specular", glm::vec3(2.0f));
+        ourShader.setFloat("material.shininess", 32.0f);
 
+
+        auto backpackModel = glm::mat4(1.0f);
+        backpackModel      = glm::translate(backpackModel, glm::vec3(0.0f, 0.0f, 0.0f));
+        backpackModel      = glm::scale(backpackModel, glm::vec3(1.0f, 1.0f, 1.0f));
+        ourShader.setMat4("model", backpackModel);
+
+        shaderSingleColor.use();
+        f32 scale = 1.015f;
+
+        auto backpackModelOutline = glm::mat4(1.0f);
+        backpackModelOutline      = glm::translate(backpackModelOutline, glm::vec3(0.0f, 0.0f, 0.0f));
+        backpackModelOutline      = glm::scale(backpackModelOutline, glm::vec3(scale, scale, scale));
+        shaderSingleColor.setMat4("model", backpackModelOutline);
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
         ourModel.Draw(ourShader);
 
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST);
+        ourModel.Draw(shaderSingleColor);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
+        glEnable(GL_DEPTH_TEST);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -127,39 +163,11 @@ int main()
     return 0;
 }
 
-void processInput(GLFWwindow *window)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-
-
-    static bool pausePressedLastFrame = false;
-
-    bool pausePressedNow = glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
-
-    if (pausePressedNow && !pausePressedLastFrame)
-    {
-        if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
-        {
-            camera.Frozen = false;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        } else
-        {
-            camera.Frozen = true;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
-    }
-
-    pausePressedLastFrame = pausePressedNow;
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+    glViewport(0, 0, width, height);
 }
-void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+void mouse_callback(GLFWwindow *window, f64 xpos, f64 ypos)
 {
     if (firstMouse)
     {
@@ -176,11 +184,39 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
     camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+void processInput(GLFWwindow *window)
+{
+
+
+    static bool pausePressedLastFrame = false;
+
+    bool pausePressedNow = glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+
+    if (pausePressedNow && !pausePressedLastFrame)
+    {
+        if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+        {
+            camera.set_frozen(false);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        } else
+        {
+            camera.set_frozen(true);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+
+    pausePressedLastFrame = pausePressedNow;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+}
+void scroll_callback(GLFWwindow *window, f64 xoffset, f64 yoffset)
 {
     camera.ProcessMouseScroll((f32) yoffset);
-}
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-    glViewport(0, 0, width, height);
 }

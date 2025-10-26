@@ -73,51 +73,9 @@ AI_FORCE_INLINE aiVector3t<TReal> operator * (const aiMatrix4x4t<TReal>& pMatrix
     return res;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-template <typename TOther>
-aiVector3t<TReal>::operator aiVector3t<TOther> () const {
-    return aiVector3t<TOther>(static_cast<TOther>(x),static_cast<TOther>(y),static_cast<TOther>(z));
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE void aiVector3t<TReal>::Set( TReal pX, TReal pY, TReal pZ) {
-    x = pX;
-    y = pY;
-    z = pZ;
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE TReal aiVector3t<TReal>::SquareLength() const {
-    return x*x + y*y + z*z;
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE TReal aiVector3t<TReal>::Length() const {
-    return std::sqrt( SquareLength());
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
- aiVector3t<TReal>& aiVector3t<TReal>::Normalize() {
-    const TReal l = Length();
-    if (l == 0) {
-        return *this;
-    }
-    *this /= Length();
-
-    return *this;
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE aiVector3t<TReal>& aiVector3t<TReal>::NormalizeSafe() {
-    TReal len = Length();
-    if ( len > static_cast< TReal >( 0 ) ) {
-        *this /= len;
-    }
-    return *this;
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator += (const aiVector3t<TReal>& o) {
+template<typename TReal>
+AI_FORCE_INLINE const aiVector3t<TReal> &aiVector3t<TReal>::operator+=(const aiVector3t<TReal> &o)
+{
     x += o.x;
     y += o.y;
     z += o.z;
@@ -125,8 +83,9 @@ AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator += (const a
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator -= (const aiVector3t<TReal>& o) {
+template<typename TReal>
+AI_FORCE_INLINE const aiVector3t<TReal> &aiVector3t<TReal>::operator-=(const aiVector3t<TReal> &o)
+{
     x -= o.x;
     y -= o.y;
     z -= o.z;
@@ -134,8 +93,9 @@ AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator -= (const a
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator *= (TReal f) {
+template<typename TReal>
+AI_FORCE_INLINE const aiVector3t<TReal> &aiVector3t<TReal>::operator*=(TReal f)
+{
     x *= f;
     y *= f;
     z *= f;
@@ -143,9 +103,11 @@ AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator *= (TReal f
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator /= (TReal f) {
-    if ( f == static_cast<TReal>(0.0)) {
+template<typename TReal>
+AI_FORCE_INLINE const aiVector3t<TReal> &aiVector3t<TReal>::operator/=(TReal f)
+{
+    if (f == static_cast<TReal>(0.0))
+    {
         return *this;
     }
     const TReal invF = (TReal) 1.0 / f;
@@ -156,19 +118,23 @@ AI_FORCE_INLINE const aiVector3t<TReal>& aiVector3t<TReal>::operator /= (TReal f
     return *this;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE aiVector3t<TReal>& aiVector3t<TReal>::operator *= (const aiMatrix3x3t<TReal>& mat){
-    return (*this =  mat * (*this));
-}
-// ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE aiVector3t<TReal>& aiVector3t<TReal>::operator *= (const aiMatrix4x4t<TReal>& mat){
+template<typename TReal>
+AI_FORCE_INLINE aiVector3t<TReal> &aiVector3t<TReal>::operator*=(const aiMatrix3x3t<TReal> &mat)
+{
     return (*this = mat * (*this));
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE TReal aiVector3t<TReal>::operator[](unsigned int i) const {
-    switch (i) {
+template<typename TReal>
+AI_FORCE_INLINE aiVector3t<TReal> &aiVector3t<TReal>::operator*=(const aiMatrix4x4t<TReal> &mat)
+{
+    return (*this = mat * (*this));
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE TReal aiVector3t<TReal>::operator[](unsigned int i) const
+{
+    switch (i)
+    {
         case 0:
             return x;
         case 1:
@@ -181,9 +147,11 @@ AI_FORCE_INLINE TReal aiVector3t<TReal>::operator[](unsigned int i) const {
     return x;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE TReal& aiVector3t<TReal>::operator[](unsigned int i) {
-    switch (i) {
+template<typename TReal>
+AI_FORCE_INLINE TReal &aiVector3t<TReal>::operator[](unsigned int i)
+{
+    switch (i)
+    {
         case 0:
             return x;
         case 1:
@@ -196,32 +164,88 @@ AI_FORCE_INLINE TReal& aiVector3t<TReal>::operator[](unsigned int i) {
     return x;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE bool aiVector3t<TReal>::operator== (const aiVector3t<TReal>& other) const {
+template<typename TReal>
+AI_FORCE_INLINE bool aiVector3t<TReal>::operator==(const aiVector3t<TReal> &other) const
+{
     return x == other.x && y == other.y && z == other.z;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE bool aiVector3t<TReal>::operator!= (const aiVector3t<TReal>& other) const {
+template<typename TReal>
+AI_FORCE_INLINE bool aiVector3t<TReal>::operator!=(const aiVector3t<TReal> &other) const
+{
     return x != other.x || y != other.y || z != other.z;
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE bool aiVector3t<TReal>::operator<(const aiVector3t<TReal> &other) const
+{
+    return x != other.x ? x < other.x : y != other.y ? y < other.y
+                                                     : z < other.z;
 }
 // ---------------------------------------------------------------------------
 template<typename TReal>
-AI_FORCE_INLINE bool aiVector3t<TReal>::Equal(const aiVector3t<TReal>& other, TReal epsilon) const {
-    return
-        std::abs(x - other.x) <= epsilon &&
-        std::abs(y - other.y) <= epsilon &&
-        std::abs(z - other.z) <= epsilon;
+AI_FORCE_INLINE bool aiVector3t<TReal>::Equal(const aiVector3t<TReal> &other, TReal epsilon) const
+{
+    return std::abs(x - other.x) <= epsilon &&
+           std::abs(y - other.y) <= epsilon &&
+           std::abs(z - other.z) <= epsilon;
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE bool aiVector3t<TReal>::operator < (const aiVector3t<TReal>& other) const {
-    return x != other.x ? x < other.x : y != other.y ? y < other.y : z < other.z;
+template<typename TReal>
+template<typename TOther>
+aiVector3t<TReal>::operator aiVector3t<TOther>() const
+{
+    return aiVector3t<TOther>(static_cast<TOther>(x), static_cast<TOther>(y), static_cast<TOther>(z));
 }
 // ------------------------------------------------------------------------------------------------
-template <typename TReal>
-AI_FORCE_INLINE const aiVector3t<TReal> aiVector3t<TReal>::SymMul(const aiVector3t<TReal>& o) {
-    return aiVector3t<TReal>(x*o.x,y*o.y,z*o.z);
+template<typename TReal>
+AI_FORCE_INLINE void aiVector3t<TReal>::Set(TReal pX, TReal pY, TReal pZ)
+{
+    x = pX;
+    y = pY;
+    z = pZ;
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE TReal aiVector3t<TReal>::SquareLength() const
+{
+    return x * x + y * y + z * z;
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE TReal aiVector3t<TReal>::Length() const
+{
+    return std::sqrt(SquareLength());
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+aiVector3t<TReal> &aiVector3t<TReal>::Normalize()
+{
+    const TReal l = Length();
+    if (l == 0)
+    {
+        return *this;
+    }
+    *this /= Length();
+
+    return *this;
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE aiVector3t<TReal> &aiVector3t<TReal>::NormalizeSafe()
+{
+    TReal len = Length();
+    if (len > static_cast<TReal>(0))
+    {
+        *this /= len;
+    }
+    return *this;
+}
+// ------------------------------------------------------------------------------------------------
+template<typename TReal>
+AI_FORCE_INLINE const aiVector3t<TReal> aiVector3t<TReal>::SymMul(const aiVector3t<TReal> &o)
+{
+    return aiVector3t<TReal>(x * o.x, y * o.y, z * o.z);
 }
 // ------------------------------------------------------------------------------------------------
 // symmetric addition

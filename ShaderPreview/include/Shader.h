@@ -1,8 +1,8 @@
 #pragma once
-#include <glad/glad.h>
-#include "../../Logger/include/Logger.h"
+#include <glm/mat4x4.hpp>
+
+#include "Logger.h"
 #include "Types.h"
-#include "glm/fwd.hpp"
 
 class Shader
 {

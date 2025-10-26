@@ -80,25 +80,22 @@ namespace glm
 	// -- Conversion vector constructors --
 
 	template<typename T, qualifier Q>
-	template<typename U, qualifier P>
-	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<2, T, Q>::vec(vec<2, U, P> const& v)
-		: x(static_cast<T>(v.x))
-		, y(static_cast<T>(v.y))
-	{}
+    template<typename U, qualifier P>
+    GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<2, T, Q>::vec(vec<3, U, P> const &v)
+        : x(static_cast<T>(v.x)), y(static_cast<T>(v.y))
+    {}
 
 	template<typename T, qualifier Q>
-	template<typename U, qualifier P>
-	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<2, T, Q>::vec(vec<3, U, P> const& v)
-		: x(static_cast<T>(v.x))
-		, y(static_cast<T>(v.y))
-	{}
+    template<typename U, qualifier P>
+    GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<2, T, Q>::vec(vec<4, U, P> const &v)
+        : x(static_cast<T>(v.x)), y(static_cast<T>(v.y))
+    {}
 
 	template<typename T, qualifier Q>
-	template<typename U, qualifier P>
-	GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<2, T, Q>::vec(vec<4, U, P> const& v)
-		: x(static_cast<T>(v.x))
-		, y(static_cast<T>(v.y))
-	{}
+    template<typename U, qualifier P>
+    GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<2, T, Q>::vec(vec<2, U, P> const &v)
+        : x(static_cast<T>(v.x)), y(static_cast<T>(v.y))
+    {}
 
 	// -- Component accesses --
 

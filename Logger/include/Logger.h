@@ -1,10 +1,9 @@
 #pragma once
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <mutex>
-#include <ostream>
 #include <source_location>
+#include <utility>
 
 #include "fmt/color.h"
 
@@ -49,4 +48,5 @@ private:
     inline static bool          logToFile = false;
     inline static std::ofstream logFile;
     inline static std::mutex    fileMutex;
+    inline static fs::path      fileLocation = fs::current_path() / "log.txt";
 };
